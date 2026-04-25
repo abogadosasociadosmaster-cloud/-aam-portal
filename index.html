@@ -1,353 +1,1098 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es-AR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AAM26 · War Room V2</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#1C2330">
+<meta name="format-detection" content="telephone=no">
+<title>Mi Expediente · AAM Abogados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ TOKENS ============ */
+  :root{
+    --bg-page:#F5F2EC;
+    --bg-surface:#FFFFFF;
+    --bg-deep:#1C2330;
+    --bg-deep-soft:#2A3343;
+    --primary:#1C2330;
+    --primary-hover:#2A3343;
+    --gold:#B89766;
+    --gold-soft:#D4B88A;
+    --gold-bg:rgba(184,151,102,0.08);
+    --gold-bg-strong:rgba(184,151,102,0.18);
+    --text:#1A1A1A;
+    --text-muted:#6B6B6B;
+    --text-dim:#9A9A9A;
+    --border:#E5DFD2;
+    --border-strong:#D4CCB8;
+    --divider:#EFE9DC;
+    --success:#15803d;
+    --serif:"Cormorant Garamond","Libre Caslon Text",Georgia,"Times New Roman",serif;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --mono:"IBM Plex Mono","Courier New",monospace;
+    --r-sm:3px;
+    --r-md:6px;
+    --r-lg:10px;
+    --shadow-card:0 1px 3px rgba(28,35,48,.04),0 8px 24px rgba(28,35,48,.06);
+    --shadow-btn:0 2px 8px rgba(28,35,48,.18);
+    --safe-bottom:env(safe-area-inset-bottom,0px);
+  }
+
+  /* ============ RESET ============ */
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:var(--sans);
+    background:var(--bg-page);
+    color:var(--text);
+    font-size:16px;
+    line-height:1.5;
+    min-height:100vh;
+    min-height:100dvh;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  button{font-family:inherit;cursor:pointer}
+  a{color:inherit}
+
+  /* ============ LAYOUT ============ */
+  .app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ============ HEADER ============ */
+  .header{
+    background:var(--bg-deep);
+    color:#fff;
+    padding:24px 20px 28px;
+    position:relative;
+    overflow:hidden;
+  }
+  .header::after{
+    content:"";
+    position:absolute;
+    bottom:0;left:0;right:0;
+    height:3px;
+    background:linear-gradient(90deg,transparent 0%,var(--gold) 30%,var(--gold) 70%,transparent 100%);
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .brand__logo{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:#fff;
+    border:2px solid var(--gold);
+    overflow:hidden;
+    display:grid;
+    place-items:center;
+    flex-shrink:0;
+  }
+  .brand__logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+  }
+  .brand__text{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    min-width:0;
+  }
+  .brand__title{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:20px;
+    line-height:1.1;
+    letter-spacing:0.5px;
+    color:#fff;
+  }
+  .brand__title span{color:var(--gold);font-weight:500;margin:0 2px}
+  .brand__subtitle{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--gold-soft);
+    opacity:.85;
+  }
+
+  /* ============ EXPEDIENTE BAR ============ */
+  .expBar{
+    background:var(--bg-deep-soft);
+    color:#fff;
+    padding:14px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .expBar__left{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .expBar__label{
+    font-family:var(--mono);
+    font-size:9px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--gold-soft);
+    opacity:.8;
+  }
+  .expBar__id{
+    font-family:var(--mono);
+    font-size:13px;
+    font-weight:500;
+    color:#fff;
+    letter-spacing:0.5px;
+  }
+  .expBar__right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;text-align:right}
+  .expBar__name{
+    font-family:var(--serif);
+    font-size:16px;
+    font-weight:600;
+    color:#fff;
+    line-height:1.2;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width:180px;
+  }
+  .expBar__greeting{
+    font-size:10px;
+    color:var(--gold-soft);
+    opacity:.75;
+    text-transform:uppercase;
+    letter-spacing:1px;
+  }
+
+  /* ============ STATUS PILL ============ */
+  .statusBar{
+    background:#fff;
+    padding:14px 20px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .statusDot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:var(--state-color,#6b7280);
+    position:relative;
+    flex-shrink:0;
+  }
+  .statusDot::after{
+    content:"";
+    position:absolute;
+    inset:-4px;
+    border-radius:50%;
+    background:var(--state-color,#6b7280);
+    opacity:.3;
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{transform:scale(1);opacity:.3}
+    50%{transform:scale(1.6);opacity:0}
+  }
+  .statusBar__label{
+    font-family:var(--mono);
+    font-size:9px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .statusBar__value{
+    font-size:13px;
+    font-weight:500;
+    color:var(--text);
+  }
+
+  /* ============ MAIN ============ */
+  .main{
+    flex:1;
+    padding:24px 20px 40px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+  }
+
+  .card{
+    background:var(--bg-surface);
+    border:1px solid var(--border);
+    border-top:3px solid var(--primary);
+    border-radius:var(--r-md);
+    padding:22px 20px 24px;
+    box-shadow:var(--shadow-card);
+    opacity:0;
+    transform:translateY(8px);
+    animation:fadeUp .5s ease-out forwards;
+  }
+  .card:nth-child(1){animation-delay:.05s}
+  .card:nth-child(2){animation-delay:.15s}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+  .card__eyebrow{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:1.8px;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin:0 0 6px;
+    font-weight:500;
+  }
+  .card__title{
+    font-family:var(--serif);
+    font-size:26px;
+    line-height:1.15;
+    font-weight:600;
+    color:var(--primary);
+    margin:0 0 10px;
+    letter-spacing:-0.3px;
+  }
+  .card__lead{
+    font-size:14.5px;
+    color:var(--text-muted);
+    line-height:1.55;
+    margin:0 0 18px;
+  }
+
+  /* ============ DOCS LIST ============ */
+  .docList{
+    list-style:none;
+    margin:0 0 22px;
+    padding:0;
+    border-top:1px solid var(--divider);
+  }
+  .docItem{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:13px 4px;
+    border-bottom:1px solid var(--divider);
+    transition:background .2s ease,padding-left .2s ease;
+    opacity:0;
+    transform:translateX(-6px);
+    animation:slideIn .35s ease-out forwards;
+  }
+  @keyframes slideIn{to{opacity:1;transform:translateX(0)}}
+  .docItem:hover{
+    background:var(--gold-bg);
+    padding-left:8px;
+  }
+  .docItem__num{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--gold);
+    background:var(--gold-bg-strong);
+    border-radius:var(--r-sm);
+    padding:2px 7px;
+    flex-shrink:0;
+    margin-top:1px;
+    font-weight:500;
+    min-width:26px;
+    text-align:center;
+  }
+  .docItem__text{
+    font-size:14.5px;
+    color:var(--text);
+    line-height:1.5;
+    flex:1;
+    min-width:0;
+    word-wrap:break-word;
+  }
+
+  /* ============ EMPTY STATE ============ */
+  .docEmpty{
+    text-align:center;
+    padding:24px 12px 28px;
+    border:1px dashed var(--border-strong);
+    border-radius:var(--r-md);
+    background:var(--gold-bg);
+    margin-bottom:22px;
+  }
+  .docEmpty__icon{
+    font-family:var(--serif);
+    font-size:38px;
+    color:var(--gold);
+    line-height:1;
+    margin-bottom:8px;
+  }
+  .docEmpty__title{
+    font-family:var(--serif);
+    font-size:20px;
+    color:var(--primary);
+    margin:0 0 4px;
+    font-weight:600;
+  }
+  .docEmpty__sub{
+    font-size:13px;
+    color:var(--text-muted);
+    margin:0;
+  }
+
+  /* ============ BUTTONS ============ */
+  .btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    width:100%;
+    padding:15px 18px;
+    font-family:var(--sans);
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:.2px;
+    border-radius:var(--r-md);
+    border:none;
+    cursor:pointer;
+    transition:transform .12s ease,background .2s ease,box-shadow .2s ease;
+    text-decoration:none;
+    position:relative;
+    overflow:hidden;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+  }
+  .btn:active{transform:scale(0.985)}
+  .btn--primary{
+    background:var(--primary);
+    color:#fff;
+    box-shadow:var(--shadow-btn);
+  }
+  .btn--primary:hover{background:var(--primary-hover)}
+  .btn--secondary{
+    background:transparent;
+    color:var(--primary);
+    border:1px solid var(--border-strong);
+  }
+  .btn--secondary:hover{background:var(--gold-bg);border-color:var(--gold)}
+  .btn__icon{
+    width:18px;height:18px;
+    flex-shrink:0;
+    stroke:currentColor;
+    stroke-width:2;
+    fill:none;
+  }
+  /* Ripple */
+  .ripple{
+    position:absolute;
+    border-radius:50%;
+    transform:scale(0);
+    background:rgba(184,151,102,0.45);
+    pointer-events:none;
+    animation:ripple .55s ease-out forwards;
+  }
+  @keyframes ripple{
+    to{transform:scale(4);opacity:0}
+  }
+
+  /* ============ HELP NOTE ============ */
+  .help{
+    margin-top:14px;
+    padding:14px 16px;
+    background:var(--gold-bg);
+    border-left:3px solid var(--gold);
+    border-radius:0 var(--r-sm) var(--r-sm) 0;
+    font-size:13px;
+    color:var(--text-muted);
+    line-height:1.55;
+  }
+  .help strong{color:var(--primary);font-weight:600}
+
+  /* ============ TOAST ============ */
+  .toast{
+    position:fixed;
+    bottom:calc(20px + var(--safe-bottom));
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--primary);
+    color:#fff;
+    padding:12px 20px;
+    border-radius:var(--r-md);
+    font-size:13.5px;
+    box-shadow:0 8px 24px rgba(28,35,48,.25);
+    opacity:0;
+    pointer-events:none;
+    transition:all .3s ease;
+    z-index:1000;
+    max-width:90%;
+    text-align:center;
+  }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+
+  /* ============ CONFIRMAR DOCS ============ */
+  .confirm-section{
+    margin-top:20px;
+    padding:18px 0 0;
+    border-top:1px dashed var(--border-strong);
+  }
+  .confirm-label{
+    font-size:14px;
+    font-weight:600;
+    color:var(--primary);
+    margin:0 0 4px;
+    text-align:center;
+  }
+  .confirm-sub{
+    font-size:12px;
+    color:var(--text-muted);
+    margin:0 0 14px;
+    text-align:center;
+  }
+  .btn--confirm{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    padding:13px 18px;
+    font-family:var(--sans);
+    font-size:14px;
+    font-weight:600;
+    color:var(--success);
+    background:rgba(21,128,61,.06);
+    border:1.5px solid rgba(21,128,61,.35);
+    border-radius:var(--r-md);
+    cursor:pointer;
+    transition:background .2s,border-color .2s;
+  }
+  .btn--confirm:hover{background:rgba(21,128,61,.12);border-color:rgba(21,128,61,.6)}
+  .btn--confirm:disabled{opacity:.5;cursor:not-allowed}
+  .confirm-ok{
+    padding:16px;
+    background:rgba(21,128,61,.07);
+    border:1px solid rgba(21,128,61,.22);
+    border-radius:var(--r-md);
+    text-align:center;
+  }
+  .confirm-ok__icon{font-size:26px;margin-bottom:6px}
+  .confirm-ok__title{
+    font-size:15px;font-weight:700;
+    color:var(--success);margin:0 0 4px;
+  }
+  .confirm-ok__sub{
+    font-size:12px;color:var(--text-muted);margin:0;line-height:1.5;
+  }
+  .confirm-err{
+    padding:14px;
+    background:rgba(239,68,68,.05);
+    border:1px solid rgba(239,68,68,.18);
+    border-radius:var(--r-md);
+    font-size:13px;
+    color:#b91c1c;
+    text-align:center;
+    line-height:1.55;
+  }
+  .confirm-err a{color:#b91c1c;font-weight:600}
+
+  /* ============ FOOTER ============ */
+  .footer{
+    padding:24px 20px 28px;
+    text-align:center;
+    border-top:1px solid var(--border);
+    background:rgba(255,255,255,0.5);
+  }
+  .footer__brand{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:1.4px;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    margin:0 0 16px;
+  }
+  /* Separador sutil */
+  .footer__sep{
+    display:block;
+    margin:0 auto 14px;
+    width:32px;
+    height:1px;
+    background:var(--border-strong);
+  }
+  /* Pregunta de invitación */
+  .footer__invite{
+    font-size:12px;
+    color:var(--text-muted);
+    margin:0 0 12px;
+    font-style:italic;
+  }
+  /* Botones de contacto secundario */
+  .footer__canales{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .footer__canal{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:12px;
+    color:var(--text-muted);
+    text-decoration:none;
+    border:1px solid var(--border-strong);
+    border-radius:20px;
+    padding:5px 13px;
+    transition:color .2s,border-color .2s,background .2s;
+  }
+  .footer__canal:hover{
+    color:var(--primary);
+    border-color:var(--gold);
+    background:var(--gold-bg);
+  }
+  .footer__canal--forms{
+    border-color:var(--gold-soft);
+    color:var(--gold);
+  }
+  .footer__canal--forms:hover{
+    background:var(--gold-bg-strong);
+    color:var(--primary);
+  }
+  /* Aviso legal pequeño */
+  .footer__legal{
+    font-size:10px;
+    color:var(--text-dim);
+    margin:0;
+    line-height:1.5;
+    max-width:300px;
+    margin-inline:auto;
+  }
+
+  /* ============ ERROR PAGE ============ */
+  .errorPage{
+    flex:1;
+    display:grid;
+    place-items:center;
+    padding:40px 24px;
+    text-align:center;
+  }
+  .errorPage__inner{max-width:340px}
+  .errorPage__icon{
+    font-family:var(--serif);
+    font-size:64px;
+    color:var(--gold);
+    line-height:1;
+    margin-bottom:16px;
+  }
+  .errorPage__title{
+    font-family:var(--serif);
+    font-size:28px;
+    color:var(--primary);
+    margin:0 0 12px;
+    font-weight:600;
+  }
+  .errorPage__msg{
+    font-size:15px;
+    color:var(--text-muted);
+    line-height:1.55;
+    margin:0 0 20px;
+  }
+  .errorPage__code{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-dim);
+    letter-spacing:1.2px;
+    margin-top:24px;
+  }
+
+  /* ============ RESPONSIVE TWEAKS ============ */
+  @media (max-width:360px){
+    .header{padding:20px 16px 24px}
+    .expBar,.statusBar,.main{padding-left:16px;padding-right:16px}
+    .card__title{font-size:23px}
+    .brand__title{font-size:18px}
+    .expBar__name{max-width:140px;font-size:14px}
+  }
+</style>
 </head>
 <body>
+<div class="app" id="app"></div>
 
-  <!-- ══════════════════════════════════════════
-       PANTALLA DE LOGIN
-  ══════════════════════════════════════════ -->
-  <div id="login-screen" class="screen">
-    <div class="login-box">
-      <div class="login-logo">AAM26</div>
-      <div class="login-subtitle">Legal Operations System · V2</div>
-      <div class="form-group">
-        <label class="login-label">Email de acceso</label>
-        <input type="email" id="login-email" placeholder="tu@email.com" autocomplete="email">
+<script>
+/* ===========================================================
+   AAM PORTAL · MI EXPEDIENTE
+   Versión 1.1 — 2026-04-25
+   Fix: número de teléfono correcto 2612430063
+   ===========================================================
+   URL params:
+     ?id=AAM26-001            ID del expediente (req)
+     &t=k7x2m9p4               Token (opc, validación futura)
+     &action=docs              Acción (default: docs)
+     &nombre=María%20González  Nombre del cliente
+     &estado=EN_GESTION_ADMIN  Código de estado
+     &docs=DNI|Recibo|...      Lista de docs separada por |
+     &drive=ID_CARPETA         ID o URL de la carpeta Drive
+   =========================================================== */
+
+(function(){
+  'use strict';
+
+  // ============ ENDPOINT GAS (mismo que el War Room) ============
+  const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxhIOYnY-Fs-RUwpe3VTyV3LSXdM8Eqc3vE5hGqW1w4UgUHGbfsJLT7oVEGDuspChXy/exec';
+
+  // ============ CONTACTO DEL ESTUDIO ============
+  // Actualizar aquí si cambia el número. Formato: 54 9 [área][número]
+  const TEL_ESTUDIO  = '5492612430063';
+  const TEL_DISPLAY  = '+54 9 261 243-0063';
+  const MAIL_ESTUDIO = 'abogadosasociadosmaster@gmail.com';
+
+  // ============ CANAL DE CONSULTAS — GOOGLE FORMS ============
+  // 1. Crear un Google Form con los campos:
+  //    - "Nombre completo"         → anotar entry.XXXXXXXXX
+  //    - "N° de expediente"        → anotar entry.XXXXXXXXX
+  //    - "Tipo de consulta"        → Lista: Consulta general / Información adicional / Urgencia / Reclamo / Otro
+  //    - "Contanos con detalle"    → Párrafo libre
+  //    - "¿Cómo preferís que te contactemos?" → WA / Email / Teléfono / Sin preferencia
+  // 2. En el Form → ⋮ → "Obtener enlace de relleno previo"
+  //    Completar los campos "Nombre" y "Expediente" con texto de prueba y copiar la URL
+  // 3. Reemplazar FORMS_BASE_URL con esa URL (sin los &entry... al final)
+  //    y completar FORMS_ENTRY_ID y FORMS_ENTRY_NOMBRE con los IDs de campo
+  const FORMS_BASE_URL    = '';           // ← COMPLETAR: URL base del Google Form
+  const FORMS_ENTRY_ID    = '';           // ← COMPLETAR: entry.XXXXXXXX del campo "N° expediente"
+  const FORMS_ENTRY_NOMBRE= '';           // ← COMPLETAR: entry.XXXXXXXX del campo "Nombre"
+
+  // Construye la URL pre-cargada del Forms para una causa específica
+  function buildFormsURL(id, nombre){
+    if(!FORMS_BASE_URL) return '';
+    let url = FORMS_BASE_URL + '?usp=pp_url';
+    if(FORMS_ENTRY_ID    && id)     url += `&${FORMS_ENTRY_ID}=${encodeURIComponent(id)}`;
+    if(FORMS_ENTRY_NOMBRE && nombre) url += `&${FORMS_ENTRY_NOMBRE}=${encodeURIComponent(nombre)}`;
+    return url;
+  }
+
+  // ============ CATÁLOGO DE ESTADOS ============
+  const ESTADOS = {
+    INGRESADO:              { label:'Ingresado',                     color:'#6b7280' },
+    PENDIENTE_DOCS:         { label:'Pendiente de documentación',    color:'#f59e0b' },
+    DOCS_COMPLETOS:         { label:'Documentación completa',        color:'#3b82f6' },
+    EN_GESTION_ADMIN:       { label:'En gestión administrativa',     color:'#3b82f6' },
+    PRESENTADO_CIA:         { label:'Presentado a compañía',         color:'#f97316' },
+    ESPERA_RESPUESTA:       { label:'En espera de respuesta',        color:'#f59e0b' },
+    OFERTA_RECIBIDA:        { label:'Oferta recibida',               color:'#8b5cf6' },
+    ACEPTADO_ADMIN:         { label:'Oferta aceptada',               color:'#22c55e' },
+    COBRADO_ADMIN:          { label:'Cobrado',                       color:'#15803d' },
+    RECHAZADO_ESCALA:       { label:'Derivado a vía judicial',       color:'#ef4444' },
+    DEMANDA_PREPARACION:    { label:'Preparando demanda',            color:'#6366f1' },
+    DEMANDA_PRESENTADA:     { label:'Demanda presentada',            color:'#1e40af' },
+    TRASLADO_DEMANDA:       { label:'Traslado de demanda',           color:'#1e40af' },
+    CONTESTACION_DEMANDA:   { label:'Contestación de demanda',       color:'#1e40af' },
+    APERTURA_PRUEBA:        { label:'Período de prueba',             color:'#0369a1' },
+    PRODUCCION_PRUEBA:      { label:'Producción de prueba',          color:'#0369a1' },
+    ALEGATOS:               { label:'Alegatos',                      color:'#0369a1' },
+    LLAMADO_AUTOS_SENTENCIA:{ label:'Esperando sentencia',           color:'#0e7490' },
+    SENTENCIA:              { label:'Sentencia dictada',             color:'#0e7490' },
+    APELACION:              { label:'En apelación',                  color:'#dc2626' },
+    SEGUNDA_INSTANCIA:      { label:'Segunda instancia',             color:'#dc2626' },
+    FIRME:                  { label:'Sentencia firme',               color:'#15803d' },
+    COBRADO_JUDICIAL:       { label:'Cobrado (judicial)',            color:'#15803d' },
+    SUSPENDIDO:             { label:'Suspendido',                    color:'#475569' },
+    ARCHIVADO:              { label:'Archivado',                     color:'#475569' },
+  };
+
+  // ============ HELPERS ============
+  const $ = sel => document.querySelector(sel);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+
+  function getParams(){
+    const p = new URLSearchParams(window.location.search);
+    const get = (k, fb='') => (p.get(k) ?? fb).trim();
+    return {
+      id:      get('id', ''),
+      token:   get('t', ''),
+      action:  get('action', 'docs').toLowerCase(),
+      nombre:  get('nombre', ''),
+      estado:  get('estado', '').toUpperCase(),
+      docs:    get('docs', ''),
+      drive:   get('drive', ''),
+    };
+  }
+
+  function parseDocs(raw){
+    if(!raw) return [];
+    return raw.split('|')
+      .map(d => d.trim())
+      .filter(Boolean)
+      .slice(0, 30);
+  }
+
+  function buildDriveUrl(driveParam){
+    if(!driveParam) return null;
+    const v = driveParam.trim();
+    if(/^https?:\/\//i.test(v)) return v;
+    return `https://drive.google.com/drive/folders/${encodeURIComponent(v)}`;
+  }
+
+  function getEstadoInfo(code){
+    return ESTADOS[code] || {
+      label: code ? code.replace(/_/g,' ').toLowerCase() : 'Sin estado',
+      color:'#6b7280'
+    };
+  }
+
+  function saludo(){
+    const h = new Date().getHours();
+    if(h < 12) return 'Buen día';
+    if(h < 19) return 'Buenas tardes';
+    return 'Buenas noches';
+  }
+
+  // ============ ICONS (inline SVG) ============
+  const ICON_DRIVE = '<svg class="btn__icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="M9 15l3-3 3 3"/></svg>';
+  const ICON_WA    = '<svg class="btn__icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
+
+  // ============ RIPPLE EFFECT ============
+  function attachRipple(btn){
+    btn.addEventListener('pointerdown', function(e){
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size/2;
+      const y = e.clientY - rect.top - size/2;
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      r.style.width = r.style.height = size + 'px';
+      r.style.left = x + 'px';
+      r.style.top  = y + 'px';
+      btn.appendChild(r);
+      setTimeout(() => r.remove(), 600);
+    });
+  }
+
+  // ============ TOAST ============
+  function toast(msg, ms=2400){
+    let t = $('#toast');
+    if(!t){
+      t = document.createElement('div');
+      t.id = 'toast';
+      t.className = 'toast';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), ms);
+  }
+
+  // ============ RENDER: HEADER ============
+  function renderHeader(){
+    return `
+      <header class="header">
+        <div class="brand">
+          <div class="brand__logo">
+            <img src="assets/aam-logo-256.png" alt="AAM" onerror="this.style.display='none'">
+          </div>
+          <div class="brand__text">
+            <div class="brand__title">A<span>|</span>A<span>|</span>M</div>
+            <div class="brand__subtitle">Abogados Asociados</div>
+          </div>
+        </div>
+      </header>
+    `;
+  }
+
+  // ============ RENDER: EXPEDIENTE BAR ============
+  function renderExpBar(p){
+    const nombre = p.nombre || 'Cliente';
+    const id = p.id || '—';
+    return `
+      <div class="expBar">
+        <div class="expBar__left">
+          <div class="expBar__label">Expediente</div>
+          <div class="expBar__id">${esc(id)}</div>
+        </div>
+        <div class="expBar__right">
+          <div class="expBar__greeting">${esc(saludo())}</div>
+          <div class="expBar__name">${esc(nombre)}</div>
+        </div>
       </div>
-      <button class="btn-primary" id="btn-login">INGRESAR AL SISTEMA</button>
-      <div class="login-error" id="login-error"></div>
-    </div>
-  </div>
+    `;
+  }
 
-  <!-- ══════════════════════════════════════════
-       APP PRINCIPAL
-  ══════════════════════════════════════════ -->
-  <div id="app" class="screen hidden">
-
-    <!-- ── SIDEBAR ─────────────────────────── -->
-    <nav id="sidebar">
-      <div class="brand">
-        <span class="brand-name">AAM26</span>
-        <span class="brand-sub">War Room V2</span>
+  // ============ RENDER: STATUS BAR ============
+  function renderStatusBar(p){
+    const info = getEstadoInfo(p.estado);
+    return `
+      <div class="statusBar" style="--state-color:${info.color}">
+        <div class="statusDot"></div>
+        <div>
+          <div class="statusBar__label">Estado actual</div>
+          <div class="statusBar__value">${esc(info.label)}</div>
+        </div>
       </div>
+    `;
+  }
 
-      <div id="user-info">
-        <div class="user-name" id="user-nombre">—</div>
-        <span class="user-rol" id="user-rol">—</span>
-      </div>
+  // ============ RENDER: ACCIÓN DOCS ============
+  function renderDocs(p){
+    const docs = parseDocs(p.docs);
+    const driveUrl = buildDriveUrl(p.drive);
 
-      <ul class="nav-menu">
-        <li class="nav-item active" data-view="causas">
-          <span class="nav-icon">⚖</span>
-          Causas 2026
-          <span class="badge" id="badge-causas">0</span>
+    let docsHtml = '';
+    if(docs.length === 0){
+      docsHtml = `
+        <div class="docEmpty">
+          <div class="docEmpty__icon">✓</div>
+          <div class="docEmpty__title">No hay documentos pendientes</div>
+          <p class="docEmpty__sub">Tu carpeta está al día. Si querés revisar lo que ya enviaste, podés ingresar igualmente.</p>
+        </div>
+      `;
+    } else {
+      const items = docs.map((d, i) => `
+        <li class="docItem" style="animation-delay:${0.25 + i*0.06}s">
+          <span class="docItem__num">${String(i+1).padStart(2,'0')}</span>
+          <span class="docItem__text">${esc(d)}</span>
         </li>
-        <li class="nav-item" data-view="alertas">
-          <span class="nav-icon">🔴</span>
-          Alertas
-          <span class="badge danger" id="badge-alertas">0</span>
-        </li>
-        <li class="nav-item" data-view="archivo">
-          <span class="nav-icon">📁</span>
-          Archivo [VS]
-          <span class="badge" id="badge-archivo">0</span>
-        </li>
-        <li class="nav-item" data-view="financiero" id="nav-financiero">
-          <span class="nav-icon">💰</span>
-          Financiero
-        </li>
-      </ul>
+      `).join('');
+      docsHtml = `<ul class="docList">${items}</ul>`;
+    }
 
-      <div class="nav-footer">
-        <a href="https://mev.jus.mendoza.gov.ar" target="_blank" class="nav-link-ext">
-          MEV Mendoza ↗
-        </a>
-        <a href="https://www.jus.mendoza.gov.ar/iurix-online" target="_blank" class="nav-link-ext">
-          Iurix Online ↗
-        </a>
-        <button class="btn-primary" id="btn-nueva-causa">+ NUEVA CAUSA</button>
-        <button class="btn-secondary" id="btn-recargar">⟳ Recargar datos</button>
+    const cta = driveUrl
+      ? `<a class="btn btn--primary" id="btnDrive" href="${esc(driveUrl)}" target="_blank" rel="noopener noreferrer">${ICON_DRIVE}<span>Subir a la carpeta del expediente</span></a>`
+      : `<button class="btn btn--primary" disabled style="opacity:.5;cursor:not-allowed">${ICON_DRIVE}<span>Carpeta no disponible aún</span></button>`;
+
+    const eyebrow = docs.length === 0 ? 'Documentación' : `Documentación pendiente · ${docs.length}`;
+    const title   = docs.length === 0 ? 'Tu carpeta está al día' : 'Necesitamos estos documentos';
+    const lead    = docs.length === 0
+      ? 'No tenemos pedidos abiertos. Cuando tu abogado solicite algo nuevo, te llegará un enlace.'
+      : 'Subí los siguientes documentos a tu carpeta. Aceptamos foto del original (legible, sin reflejos) o PDF.';
+
+    // Bloque de confirmación: solo aparece si hay docs pendientes y hay carpeta Drive
+    const confirmHtml = (docs.length > 0 && driveUrl) ? `
+      <div class="confirm-section" id="confirmSection">
+        <p class="confirm-label">¿Ya subiste todos los documentos?</p>
+        <p class="confirm-sub">Tocá el botón para avisarle a tu abogado/a.</p>
+        <button class="btn--confirm" id="btnConfirmar">✓ &nbsp;Ya subí los documentos</button>
       </div>
+    ` : '';
 
-      <div id="status-bar">
-        <span class="status-dot"></span>
-        <span id="status-text">Conectando...</span>
-      </div>
-    </nav>
-
-    <!-- ── CONTENIDO PRINCIPAL ──────────────── -->
-    <main id="main-content">
-
-      <!-- VIEW: CAUSAS 2026 -->
-      <div id="view-causas" class="view active">
-        <div class="view-header">
-          <h1>Causas 2026</h1>
-          <div class="filters">
-            <input type="text" id="search-causas" placeholder="Buscar cliente, ID, DNI, aseguradora...">
-            <select id="filter-abogado">
-              <option value="">Todos los abogados</option>
-            </select>
-            <select id="filter-estado">
-              <option value="">Todos los estados</option>
-              <option value="INGRESADO">INGRESADO</option>
-              <option value="PENDIENTE_DOCS">PENDIENTE DOCS</option>
-              <option value="EN_GESTION_ADMIN">EN GESTIÓN ADMIN</option>
-              <option value="ESPERA_RESPUESTA">ESPERA RESPUESTA</option>
-              <option value="OFERTA_RECIBIDA">OFERTA RECIBIDA</option>
-              <option value="DEMANDA_PREPARACION">DEMANDA PREP.</option>
-              <option value="TRASLADO_DEMANDA">TRASLADO</option>
-              <option value="SENTENCIA">SENTENCIA</option>
-              <option value="COBRADO_ADMIN">COBRADO ADMIN</option>
-              <option value="COBRADO_JUDICIAL">COBRADO JUDICIAL</option>
-            </select>
+    return `
+      <main class="main">
+        <section class="card">
+          <p class="card__eyebrow">${esc(eyebrow)}</p>
+          <h1 class="card__title">${esc(title)}</h1>
+          <p class="card__lead">${esc(lead)}</p>
+          ${docsHtml}
+          ${cta}
+          <div class="help">
+            <strong>¿Cómo funciona?</strong> Tocá el botón, se abre tu carpeta en Google Drive. Subí cada archivo con nombre claro (ej. <em>DNI-frente.jpg</em>). Cuando termines, volvé a esta página y avisanos.
           </div>
-        </div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>CLIENTE</th>
-                <th>RECLAMADO A</th>
-                <th>ESTADO</th>
-                <th>SEM.</th>
-                <th>DÍAS</th>
-                <th>S/NOV.</th>
-                <th>ABOGADO</th>
-                <th>RESULTADO</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="tbody-causas">
-              <tr><td colspan="10"><div class="loader"><div class="spinner"></div> Cargando causas...</div></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+          ${confirmHtml}
+        </section>
+      </main>
+    `;
+  }
 
-      <!-- VIEW: ALERTAS -->
-      <div id="view-alertas" class="view">
-        <div class="view-header">
-          <h1>Alertas y Vencimientos</h1>
+  // ============ RENDER: ERROR (id faltante o link roto) ============
+  function renderError(){
+    const waMsg = encodeURIComponent('Hola, recibí un enlace al portal pero parece estar incompleto. ¿Pueden enviarme uno nuevo?');
+    return `
+      <main class="errorPage">
+        <div class="errorPage__inner">
+          <div class="errorPage__icon">!</div>
+          <h1 class="errorPage__title">Enlace incompleto</h1>
+          <p class="errorPage__msg">El enlace que recibiste no contiene la información necesaria. Escribinos por WhatsApp y te enviamos uno nuevo.</p>
+          <a class="btn btn--secondary" href="https://wa.me/${TEL_ESTUDIO}?text=${waMsg}" target="_blank" rel="noopener noreferrer">${ICON_WA}<span>Escribir por WhatsApp</span></a>
+          <div class="errorPage__code">ERR · LINK_PARAMS_MISSING</div>
         </div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>CLIENTE</th>
-                <th>ESTADO</th>
-                <th>SEM.</th>
-                <th>DÍAS EN ESTADO</th>
-                <th>VENCIMIENTO</th>
-                <th>RESPONSABLE</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="tbody-alertas"></tbody>
-          </table>
-        </div>
-      </div>
+      </main>
+    `;
+  }
 
-      <!-- VIEW: ARCHIVO [VS] -->
-      <div id="view-archivo" class="view">
-        <div class="view-header">
-          <h1>Archivo Histórico [VS]</h1>
-          <div class="filters">
-            <input type="text" id="search-archivo" placeholder="Buscar en archivo...">
-          </div>
+  // ============ RENDER: ACCIÓN NO DISPONIBLE AÚN ============
+  function renderProximamente(p){
+    return `
+      <main class="errorPage">
+        <div class="errorPage__inner">
+          <div class="errorPage__icon">◎</div>
+          <h1 class="errorPage__title">Próximamente</h1>
+          <p class="errorPage__msg">Esta sección de tu expediente estará disponible pronto. Ante consultas escribinos.</p>
+          <a class="btn btn--secondary" href="https://wa.me/${TEL_ESTUDIO}" target="_blank" rel="noopener noreferrer">${ICON_WA}<span>Escribir por WhatsApp</span></a>
+          <div class="errorPage__code">ACTION · ${esc((p.action||'').toUpperCase())}</div>
         </div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>CLIENTE</th>
-                <th>RECLAMADO A</th>
-                <th>ESTADO</th>
-                <th>ABOGADO</th>
-                <th>NRO. EXP.</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="tbody-archivo"></tbody>
-          </table>
-        </div>
-      </div>
+      </main>
+    `;
+  }
 
-      <!-- VIEW: FINANCIERO -->
-      <div id="view-financiero" class="view">
-        <div class="view-header">
-          <h1>Rendición Financiera</h1>
-        </div>
-        <div id="kpi-grid" class="kpi-grid"></div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>CLIENTE</th>
-                <th>ESTADO</th>
-                <th>COBRADO ADMIN</th>
-                <th>COBRADO JUD.</th>
-                <th>GASTOS</th>
-                <th>INGRESOS TOTALES</th>
-                <th>RESULTADO NETO</th>
-              </tr>
-            </thead>
-            <tbody id="tbody-financiero"></tbody>
-          </table>
-        </div>
-      </div>
+  // ============ RENDER: FOOTER ============
+  // Recibe params para pre-cargar el Google Forms con ID y nombre del cliente
+  function renderFooter(p){
+    p = p || {};
+    const formsURL  = buildFormsURL(p.id || '', p.nombre || '');
+    const mailSubj  = encodeURIComponent(`Consulta expediente ${p.id || ''}`.trim());
+    const mailBody  = encodeURIComponent(
+      `Hola,\n\nTengo una consulta sobre mi expediente N° ${p.id || '(número)'}.\n\n`
+    );
+    const mailHref  = `mailto:${MAIL_ESTUDIO}?subject=${mailSubj}&body=${mailBody}`;
 
-    </main>
-  </div>
+    // Canal de formulario: solo se muestra si la URL del Forms está configurada
+    const formsBtn = formsURL
+      ? `<a class="footer__canal footer__canal--forms"
+            href="${formsURL}"
+            target="_blank" rel="noopener noreferrer"
+            title="Canal para consultas, quejas o información adicional sobre tu causa">
+            📝 <span>Consulta / comentario</span>
+         </a>`
+      : '';
 
-  <!-- ══════════════════════════════════════════
-       MODAL: FICHA DE CAUSA
-  ══════════════════════════════════════════ -->
-  <div id="modal-ficha" class="modal hidden">
-    <div class="modal-overlay" id="overlay-ficha"></div>
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title">
-          <span class="modal-id" id="modal-id"></span>
-          <span id="modal-semaforo-badge"></span>
-          <span id="modal-estado-badge"></span>
+    return `
+      <footer class="footer">
+        <p class="footer__brand">AAM Abogados Asociados · Mendoza</p>
+        <span class="footer__sep" role="separator"></span>
+        <p class="footer__invite">¿Tenés una consulta o algo para contarnos?</p>
+        <div class="footer__canales">
+          <a class="footer__canal"
+             href="${mailHref}"
+             title="Escribir por correo al estudio">
+            ✉ <span>Escribir por correo</span>
+          </a>
+          ${formsBtn}
         </div>
-        <div class="modal-actions">
-          <button class="btn-wa" id="btn-wa-modal">💬 WhatsApp</button>
-          <button class="btn-suspender hidden" id="btn-suspender-modal">⏸ Suspender</button>
-          <button class="btn-reactivar hidden" id="btn-reactivar-modal">▶ Reactivar</button>
-          <button class="btn-primary" id="btn-guardar">💾 Guardar</button>
-          <button class="btn-close" id="btn-cerrar-modal">✕</button>
-        </div>
-      </div>
-      <div id="modal-body"></div>
-      <div id="modal-bitacora"></div>
-    </div>
-  </div>
+        <p class="footer__legal">
+          Este canal es para consultas generales.<br>
+          Tu expediente es gestionado por tu abogado/a asignado/a.
+        </p>
+      </footer>
+    `;
+  }
 
-  <!-- ══════════════════════════════════════════
-       MODAL: NUEVA CAUSA
-  ══════════════════════════════════════════ -->
-  <div id="modal-nueva" class="modal hidden">
-    <div class="modal-overlay" id="overlay-nueva"></div>
-    <div class="modal-content" style="max-width:640px;">
-      <div class="modal-header">
-        <div class="modal-title">
-          <span style="font-size:14px;font-weight:700;letter-spacing:1px;">NUEVA CAUSA</span>
-        </div>
-        <div class="modal-actions">
-          <button class="btn-primary" id="btn-confirmar-nueva">✓ CREAR CAUSA</button>
-          <button class="btn-close" id="btn-cerrar-nueva">✕</button>
-        </div>
-      </div>
-      <div id="form-nueva-body" style="padding:18px;overflow-y:auto;max-height:calc(100vh - 160px);">
-        <div class="form-section">
-          <div class="form-section-title">Tipo y origen</div>
-          <div class="form-grid form-grid-2">
-            <div class="form-group">
-              <label class="form-label">Tipo de Causa <span class="req">*</span></label>
-              <select class="form-control" id="new-tipo-causa">
-                <option value="">— Seleccionar —</option>
-                <option value="SINIESTRO_VIAL">Siniestro Vial</option>
-                <option value="ACCIDENTE_ART">Accidente ART</option>
-                <option value="DAÑOS_PERJUICIOS">Daños y Perjuicios</option>
-                <option value="SUCESION">Sucesión</option>
-                <option value="FAMILIA">Familia</option>
-                <option value="EJEC_HONORARIOS">Ejec. Honorarios</option>
-                <option value="EJEC_SENTENCIA">Ejec. Sentencia</option>
-                <option value="EMBARGO">Embargo</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Reclamado a (Aseguradora)</label>
-              <select class="form-control" id="new-reclamado-a">
-                <option value="">— Seleccionar —</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="form-section">
-          <div class="form-section-title">Datos del cliente</div>
-          <div class="form-grid form-grid-2">
-            <div class="form-group span-2">
-              <label class="form-label">Nombre completo <span class="req">*</span></label>
-              <input type="text" class="form-control" id="new-cliente" placeholder="Apellido Nombre">
-            </div>
-            <div class="form-group">
-              <label class="form-label">DNI</label>
-              <input type="text" class="form-control" id="new-dni" placeholder="00000000">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Teléfono</label>
-              <input type="text" class="form-control" id="new-telefono" placeholder="2614000000">
-            </div>
-            <div class="form-group span-2">
-              <label class="form-label">Email del cliente</label>
-              <input type="email" class="form-control" id="new-email" placeholder="cliente@email.com">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Fecha del hecho</label>
-              <input type="date" class="form-control" id="new-fecha-hecho">
-            </div>
-            <div class="form-group">
-              <label class="form-label">N° Siniestro</label>
-              <input type="text" class="form-control" id="new-nro-siniestro">
-            </div>
-          </div>
-        </div>
-        <div class="form-section">
-          <div class="form-section-title">Asignación</div>
-          <div class="form-grid form-grid-2">
-            <div class="form-group">
-              <label class="form-label">Gestor</label>
-              <select class="form-control" id="new-gestor">
-                <option value="">— Seleccionar —</option>
-                <option value="Barrionuevo Martin">Barrionuevo Martin</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Subestructura</label>
-              <select class="form-control" id="new-subestructura">
-                <option value="CENTRAL">CENTRAL</option>
-                <option value="SUB_A">SUB_A — Blanco Vanina</option>
-                <option value="SUB_B">SUB_B — Armitano Daniel</option>
-                <option value="SUB_C">SUB_C — Rossel Guillermo</option>
-                <option value="SUB_D">SUB_D — Agüero Aristides</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  // ============ MAIN RENDER ============
+  function render(){
+    const p   = getParams();
+    const app = $('#app');
 
-  <!-- ══════════════════════════════════════════
-       PANEL: WHATSAPP
-  ══════════════════════════════════════════ -->
-  <div id="panel-wa" class="hidden">
-    <div class="panel-header">
-      <h3>💬 Mensaje WhatsApp</h3>
-      <button class="btn-close" id="btn-cerrar-wa">✕</button>
-    </div>
-    <div id="wa-preview"></div>
-    <div class="panel-footer">
-      <button class="btn-wa-send" id="btn-enviar-wa">📱 ABRIR EN WHATSAPP</button>
-    </div>
-  </div>
+    if(!p.id){
+      app.innerHTML = renderHeader() + renderError() + renderFooter(p);
+      return;
+    }
 
-  <!-- TOAST -->
-  <div id="toast"></div>
+    let body = '';
+    if(p.action === 'docs' || p.action === ''){
+      body = renderDocs(p);
+    } else {
+      body = renderProximamente(p);
+    }
 
-  <script src="app.js"></script>
+    app.innerHTML =
+      renderHeader() +
+      renderExpBar(p) +
+      renderStatusBar(p) +
+      body +
+      renderFooter(p);
+
+    // Ripple en botón Drive
+    const btnDrive = $('#btnDrive');
+    if(btnDrive){
+      attachRipple(btnDrive);
+      btnDrive.addEventListener('click', () => toast('Abriendo tu carpeta…'));
+    }
+
+    // Inicializar botón de confirmación de docs
+    const btnConfirmar = $('#btnConfirmar');
+    if(btnConfirmar){
+      // Si ya avisó antes en este dispositivo, mostrar estado completado
+      try{
+        const yaConfirmado = localStorage.getItem('aam_conf_' + p.id);
+        if(yaConfirmado){
+          const sec = $('#confirmSection');
+          if(sec) sec.innerHTML = `
+            <div class="confirm-ok">
+              <div class="confirm-ok__icon">✅</div>
+              <p class="confirm-ok__title">Ya avisaste (${yaConfirmado})</p>
+              <p class="confirm-ok__sub">Tu abogado/a fue notificado/a. Revisarán tu carpeta pronto.</p>
+            </div>`;
+        } else {
+          btnConfirmar.addEventListener('click', () => confirmarEnvioDocs(p.id, p.nombre));
+        }
+      } catch(e){
+        btnConfirmar.addEventListener('click', () => confirmarEnvioDocs(p.id, p.nombre));
+      }
+    }
+
+    // Registro de visita en localStorage
+    try{
+      const key    = 'aam_visit_' + p.id;
+      const visits = JSON.parse(localStorage.getItem(key) || '[]');
+      visits.push({ t: new Date().toISOString(), action: p.action });
+      localStorage.setItem(key, JSON.stringify(visits.slice(-20)));
+    } catch(e){}
+  }
+
+  // ============ CONFIRMAR ENVÍO DE DOCS AL ABOGADO ============
+  // Llama al GAS con action confirmarDocs (mode no-cors, igual que el War Room).
+  // Actualiza DOCS_CONFIRMADOS_CLIENTE + FECHA + BITACORA en el Sheet
+  // y notifica al abogado por email.
+  function confirmarEnvioDocs(id, nombre){
+    const btn = $('#btnConfirmar');
+    const sec = $('#confirmSection');
+    if(!btn || !sec) return;
+
+    btn.disabled = true;
+    btn.innerHTML = '⏳ &nbsp;Enviando aviso...';
+
+    const hoy = new Date().toISOString().split('T')[0];
+
+    fetch(GAS_ENDPOINT, {
+      method:  'POST',
+      mode:    'no-cors',            // igual que War Room → no se puede leer la respuesta
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action:        'confirmarDocs',
+        idCausa:       id,
+        clienteNombre: nombre,
+        fecha:         hoy,
+        ua:            (navigator.userAgent || '').slice(0, 200),
+      }),
+    })
+    .then(() => {
+      // no-cors: la respuesta no es legible, asumimos éxito si no hubo error de red
+      try { localStorage.setItem('aam_conf_' + id, hoy); } catch(e){}
+      sec.innerHTML = `
+        <div class="confirm-ok">
+          <div class="confirm-ok__icon">✅</div>
+          <p class="confirm-ok__title">¡Listo! Le avisamos a tu abogado/a</p>
+          <p class="confirm-ok__sub">
+            Revisarán tu carpeta y te contactaremos para los próximos pasos.<br>
+            Si tenés algo más, usá el correo del pie de página.
+          </p>
+        </div>`;
+    })
+    .catch(() => {
+      sec.innerHTML = `
+        <div class="confirm-err">
+          No pudimos enviar el aviso ahora mismo.<br>
+          <a href="https://wa.me/${TEL_ESTUDIO}">Escribinos por WhatsApp</a> para avisarnos que subiste los documentos.
+        </div>`;
+      btn.disabled = false;
+      btn.innerHTML = '✓ &nbsp;Ya subí los documentos';
+    });
+  }
+
+  // ============ BOOT ============
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', render);
+  } else {
+    render();
+  }
+
+})();
+</script>
 </body>
 </html>
