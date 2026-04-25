@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#1C2330">
+<meta name="format-detection" content="telephone=no">
+<title>Mi Expediente · AAM Abogados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ TOKENS ============ */
+  :root{
+    --bg-page:#F5F2EC;
+    --bg-surface:#FFFFFF;
+    --bg-deep:#1C2330;
+    --bg-deep-soft:#2A3343;
+    --primary:#1C2330;
+    --primary-hover:#2A3343;
+    --gold:#B89766;
+    --gold-soft:#D4B88A;
+    --gold-bg:rgba(184,151,102,0.08);
+    --gold-bg-strong:rgba(184,151,102,0.18);
+    --text:#1A1A1A;
+    --text-muted:#6B6B6B;
+    --text-dim:#9A9A9A;
+    --border:#E5DFD2;
+    --border-strong:#D4CCB8;
+    --divider:#EFE9DC;
+    --success:#15803d;
+    --serif:"Cormorant Garamond","Libre Caslon Text",Georgia,"Times New Roman",serif;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --mono:"IBM Plex Mono","Courier New",monospace;
+    --r-sm:3px;
+    --r-md:6px;
+    --r-lg:10px;
+    --shadow-card:0 1px 3px rgba(28,35,48,.04),0 8px 24px rgba(28,35,48,.06);
+    --shadow-btn:0 2px 8px rgba(28,35,48,.18);
+    --safe-bottom:env(safe-area-inset-bottom,0px);
+  }
+
+  /* ============ RESET ============ */
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:var(--sans);
+    background:var(--bg-page);
+    color:var(--text);
+    font-size:16px;
+    line-height:1.5;
+    min-height:100vh;
+    min-height:100dvh;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  button{font-family:inherit;cursor:pointer}
+  a{color:inherit}
+
+  /* ============ LAYOUT ============ */
+  .app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ============ HEADER ============ */
+  .header{
+    background:var(--bg-deep);
+    color:#fff;
+    padding:24px 20px 28px;
+    position:relative;
+    overflow:hidden;
+  }
+  .header::after{
+    content:"";
+    position:absolute;
+    bottom:0;left:0;right:0;
+    height:3px;
+    background:linear-gradient(90deg,transparent 0%,var(--gold) 30%,var(--gold) 70%,transparent 100%);
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .brand__logo{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:#fff;
+    border:2px solid var(--gold);
+    overflow:hidden;
+    display:grid;
+    place-items:center;
+    flex-shrink:0;
+  }
+  .brand__logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+  }
+  .brand__text{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    min-width:0;
+  }
+  .brand__title{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:20px;
+    line-height:1.1;
+    letter-spacing:0.5px;
+    color:#fff;
+  }
+  .brand__title span{color:var(--gold);font-weight:500;margin:0 2px}
+  .brand__subtitle{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--gold-soft);
+    opacity:.85;
+  }
+
+  /* ============ EXPEDIENTE BAR ============ */
+  .expBar{
+    background:var(--bg-deep-soft);
+    color:#fff;
+    padding:14px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .expBar__left{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .expBar__label{
+    font-family:var(--mono);
+    font-size:9px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--gold-soft);
+    opacity:.8;
+  }
+  .expBar__id{
+    font-family:var(--mono);
+    font-size:13px;
+    font-weight:500;
+    color:#fff;
+    letter-spacing:0.5px;
+  }
+  .expBar__right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0;text-align:right}
+  .expBar__name{
+    font-family:var(--serif);
+    font-size:16px;
+    font-weight:600;
+    color:#fff;
+    line-height:1.2;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width:180px;
+  }
+  .expBar__greeting{
+    font-size:10px;
+    color:var(--gold-soft);
+    opacity:.75;
+    text-transform:uppercase;
+    letter-spacing:1px;
+  }
+
+  /* ============ STATUS PILL ============ */
+  .statusBar{
+    background:#fff;
+    padding:14px 20px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .statusDot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:var(--state-color,#6b7280);
+    position:relative;
+    flex-shrink:0;
+  }
+  .statusDot::after{
+    content:"";
+    position:absolute;
+    inset:-4px;
+    border-radius:50%;
+    background:var(--state-color,#6b7280);
+    opacity:.3;
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{transform:scale(1);opacity:.3}
+    50%{transform:scale(1.6);opacity:0}
+  }
+  .statusBar__label{
+    font-family:var(--mono);
+    font-size:9px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .statusBar__value{
+    font-size:13px;
+    font-weight:500;
+    color:var(--text);
+  }
+
+  /* ============ MAIN ============ */
+  .main{
+    flex:1;
+    padding:24px 20px 40px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+  }
+
+  .card{
+    background:var(--bg-surface);
+    border:1px solid var(--border);
+    border-top:3px solid var(--primary);
+    border-radius:var(--r-md);
+    padding:22px 20px 24px;
+    box-shadow:var(--shadow-card);
+    opacity:0;
+    transform:translateY(8px);
+    animation:fadeUp .5s ease-out forwards;
+  }
+  .card:nth-child(1){animation-delay:.05s}
+  .card:nth-child(2){animation-delay:.15s}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+  .card__eyebrow{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:1.8px;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin:0 0 6px;
+    font-weight:500;
+  }
+  .card__title{
+    font-family:var(--serif);
+    font-size:26px;
+    line-height:1.15;
+    font-weight:600;
+    color:var(--primary);
+    margin:0 0 10px;
+    letter-spacing:-0.3px;
+  }
+  .card__lead{
+    font-size:14.5px;
+    color:var(--text-muted);
+    line-height:1.55;
+    margin:0 0 18px;
+  }
+
+  /* ============ DOCS LIST ============ */
+  .docList{
+    list-style:none;
+    margin:0 0 22px;
+    padding:0;
+    border-top:1px solid var(--divider);
+  }
+  .docItem{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:13px 4px;
+    border-bottom:1px solid var(--divider);
+    transition:background .2s ease,padding-left .2s ease;
+    opacity:0;
+    transform:translateX(-6px);
+    animation:slideIn .35s ease-out forwards;
+  }
+  @keyframes slideIn{to{opacity:1;transform:translateX(0)}}
+  .docItem:hover{
+    background:var(--gold-bg);
+    padding-left:8px;
+  }
+  .docItem__num{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--gold);
+    background:var(--gold-bg-strong);
+    border-radius:var(--r-sm);
+    padding:2px 7px;
+    flex-shrink:0;
+    margin-top:1px;
+    font-weight:500;
+    min-width:26px;
+    text-align:center;
+  }
+  .docItem__text{
+    font-size:14.5px;
+    color:var(--text);
+    line-height:1.5;
+    flex:1;
+    min-width:0;
+    word-wrap:break-word;
+  }
+
+  /* ============ EMPTY STATE ============ */
+  .docEmpty{
+    text-align:center;
+    padding:24px 12px 28px;
+    border:1px dashed var(--border-strong);
+    border-radius:var(--r-md);
+    background:var(--gold-bg);
+    margin-bottom:22px;
+  }
+  .docEmpty__icon{
+    font-family:var(--serif);
+    font-size:38px;
+    color:var(--gold);
+    line-height:1;
+    margin-bottom:8px;
+  }
+  .docEmpty__title{
+    font-family:var(--serif);
+    font-size:20px;
+    color:var(--primary);
+    margin:0 0 4px;
+    font-weight:600;
+  }
+  .docEmpty__sub{
+    font-size:13px;
+    color:var(--text-muted);
+    margin:0;
+  }
+
+  /* ============ BUTTONS ============ */
+  .btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    width:100%;
+    padding:15px 18px;
+    font-family:var(--sans);
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:.2px;
+    border-radius:var(--r-md);
+    border:none;
+    cursor:pointer;
+    transition:transform .12s ease,background .2s ease,box-shadow .2s ease;
+    text-decoration:none;
+    position:relative;
+    overflow:hidden;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+  }
+  .btn:active{transform:scale(0.985)}
+  .btn--primary{
+    background:var(--primary);
+    color:#fff;
+    box-shadow:var(--shadow-btn);
+  }
+  .btn--primary:hover{background:var(--primary-hover)}
+  .btn--secondary{
+    background:transparent;
+    color:var(--primary);
+    border:1px solid var(--border-strong);
+  }
+  .btn--secondary:hover{background:var(--gold-bg);border-color:var(--gold)}
+  .btn__icon{
+    width:18px;height:18px;
+    flex-shrink:0;
+    stroke:currentColor;
+    stroke-width:2;
+    fill:none;
+  }
+  /* Ripple */
+  .ripple{
+    position:absolute;
+    border-radius:50%;
+    transform:scale(0);
+    background:rgba(184,151,102,0.45);
+    pointer-events:none;
+    animation:ripple .55s ease-out forwards;
+  }
+  @keyframes ripple{
+    to{transform:scale(4);opacity:0}
+  }
+
+  /* ============ HELP NOTE ============ */
+  .help{
+    margin-top:14px;
+    padding:14px 16px;
+    background:var(--gold-bg);
+    border-left:3px solid var(--gold);
+    border-radius:0 var(--r-sm) var(--r-sm) 0;
+    font-size:13px;
+    color:var(--text-muted);
+    line-height:1.55;
+  }
+  .help strong{color:var(--primary);font-weight:600}
+
+  /* ============ TOAST ============ */
+  .toast{
+    position:fixed;
+    bottom:calc(20px + var(--safe-bottom));
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--primary);
+    color:#fff;
+    padding:12px 20px;
+    border-radius:var(--r-md);
+    font-size:13.5px;
+    box-shadow:0 8px 24px rgba(28,35,48,.25);
+    opacity:0;
+    pointer-events:none;
+    transition:all .3s ease;
+    z-index:1000;
+    max-width:90%;
+    text-align:center;
+  }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+
+  /* ============ FOOTER ============ */
+  .footer{
+    padding:20px;
+    text-align:center;
+    border-top:1px solid var(--border);
+    background:rgba(255,255,255,0.5);
+  }
+  .footer__line{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:1.2px;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    margin:0 0 8px;
+  }
+  .footer__contact{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .footer__link{
+    font-size:12px;
+    color:var(--text-muted);
+    text-decoration:none;
+    border-bottom:1px solid transparent;
+    transition:color .2s,border-color .2s;
+  }
+  .footer__link:hover{color:var(--primary);border-bottom-color:var(--gold)}
+
+  /* ============ ERROR PAGE ============ */
+  .errorPage{
+    flex:1;
+    display:grid;
+    place-items:center;
+    padding:40px 24px;
+    text-align:center;
+  }
+  .errorPage__inner{max-width:340px}
+  .errorPage__icon{
+    font-family:var(--serif);
+    font-size:64px;
+    color:var(--gold);
+    line-height:1;
+    margin-bottom:16px;
+  }
+  .errorPage__title{
+    font-family:var(--serif);
+    font-size:28px;
+    color:var(--primary);
+    margin:0 0 12px;
+    font-weight:600;
+  }
+  .errorPage__msg{
+    font-size:15px;
+    color:var(--text-muted);
+    line-height:1.55;
+    margin:0 0 20px;
+  }
+  .errorPage__code{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-dim);
+    letter-spacing:1.2px;
+    margin-top:24px;
+  }
+
+  /* ============ RESPONSIVE TWEAKS ============ */
+  @media (max-width:360px){
+    .header{padding:20px 16px 24px}
+    .expBar,.statusBar,.main{padding-left:16px;padding-right:16px}
+    .card__title{font-size:23px}
+    .brand__title{font-size:18px}
+    .expBar__name{max-width:140px;font-size:14px}
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+/* ===========================================================
+   AAM PORTAL · MI EXPEDIENTE
+   Versión producción · Vanilla JS · Acción: docs
+   ===========================================================
+   URL params:
+     ?id=AAM26-001            ID del expediente (req)
+     &t=k7x2m9p4               Token (opc, validación futura)
+     &action=docs              Acción (default: docs)
+     &nombre=María%20González  Nombre del cliente
+     &estado=EN_GESTION_ADMIN  Código de estado
+     &docs=DNI|Recibo|...      Lista de docs separada por |
+     &drive=ID_CARPETA         ID o URL de la carpeta Drive
+   =========================================================== */
+
+(function(){
+  'use strict';
+
+  // ============ CATÁLOGO DE ESTADOS ============
+  const ESTADOS = {
+    INGRESADO:           { label:'Ingresado',                     color:'#6b7280' },
+    PENDIENTE_DOCS:      { label:'Pendiente de documentación',    color:'#6b7280' },
+    DOCS_COMPLETOS:      { label:'Documentación completa',        color:'#3b82f6' },
+    EN_GESTION_ADMIN:    { label:'En gestión administrativa',     color:'#3b82f6' },
+    PRESENTADO_CIA:      { label:'Presentado a compañía',         color:'#f97316' },
+    ESPERA_RESPUESTA:    { label:'En espera de respuesta',        color:'#f59e0b' },
+    OFERTA_RECIBIDA:     { label:'Oferta recibida',               color:'#8b5cf6' },
+    ACEPTADO_ADMIN:      { label:'Oferta aceptada',               color:'#22c55e' },
+    COBRADO_ADMIN:       { label:'Cobrado',                       color:'#15803d' },
+    RECHAZADO_ESCALA:    { label:'Escala a vía judicial',         color:'#ef4444' },
+    DEMANDA_PRESENTADA:  { label:'Demanda presentada',            color:'#1e40af' },
+    SENTENCIA:           { label:'Sentencia dictada',             color:'#1e40af' },
+    COBRADO_JUDICIAL:    { label:'Cobrado (judicial)',            color:'#15803d' },
+    SUSPENDIDO:          { label:'Suspendido',                    color:'#475569' },
+    ARCHIVADO:           { label:'Archivado',                     color:'#475569' },
+  };
+
+  // ============ HELPERS ============
+  const $ = sel => document.querySelector(sel);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+
+  function getParams(){
+    const p = new URLSearchParams(window.location.search);
+    const get = (k, fb='') => (p.get(k) ?? fb).trim();
+    return {
+      id:      get('id', ''),
+      token:   get('t', ''),
+      action:  get('action', 'docs').toLowerCase(),
+      nombre:  get('nombre', ''),
+      estado:  get('estado', '').toUpperCase(),
+      docs:    get('docs', ''),
+      drive:   get('drive', ''),
+    };
+  }
+
+  function parseDocs(raw){
+    if(!raw) return [];
+    return raw.split('|')
+      .map(d => d.trim())
+      .filter(Boolean)
+      .slice(0, 30); // hard cap
+  }
+
+  function buildDriveUrl(driveParam){
+    if(!driveParam) return null;
+    const v = driveParam.trim();
+    if(/^https?:\/\//i.test(v)) return v;
+    // Asume folder ID
+    return `https://drive.google.com/drive/folders/${encodeURIComponent(v)}`;
+  }
+
+  function getEstadoInfo(code){
+    return ESTADOS[code] || { label: code ? code.replace(/_/g,' ').toLowerCase() : 'Sin estado', color:'#6b7280' };
+  }
+
+  function saludo(){
+    const h = new Date().getHours();
+    if(h < 12) return 'Buen día';
+    if(h < 19) return 'Buenas tardes';
+    return 'Buenas noches';
+  }
+
+  // ============ ICONS (inline SVG) ============
+  const ICON_DRIVE = '<svg class="btn__icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="M9 15l3-3 3 3"/></svg>';
+  const ICON_HELP  = '<svg class="btn__icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
+
+  // ============ RIPPLE EFFECT ============
+  function attachRipple(btn){
+    btn.addEventListener('pointerdown', function(e){
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size/2;
+      const y = e.clientY - rect.top - size/2;
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      r.style.width = r.style.height = size + 'px';
+      r.style.left = x + 'px';
+      r.style.top  = y + 'px';
+      btn.appendChild(r);
+      setTimeout(() => r.remove(), 600);
+    });
+  }
+
+  // ============ TOAST ============
+  function toast(msg, ms=2400){
+    let t = $('#toast');
+    if(!t){
+      t = document.createElement('div');
+      t.id = 'toast';
+      t.className = 'toast';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), ms);
+  }
+
+  // ============ RENDER: HEADER ============
+  function renderHeader(){
+    return `
+      <header class="header">
+        <div class="brand">
+          <div class="brand__logo">
+            <img src="assets/aam-logo-256.png" alt="" onerror="this.style.display='none'">
+          </div>
+          <div class="brand__text">
+            <div class="brand__title">A<span>|</span>A<span>|</span>M</div>
+            <div class="brand__subtitle">Abogados Asociados</div>
+          </div>
+        </div>
+      </header>
+    `;
+  }
+
+  // ============ RENDER: EXPEDIENTE BAR ============
+  function renderExpBar(p){
+    const nombre = p.nombre || 'Cliente';
+    const id = p.id || '—';
+    return `
+      <div class="expBar">
+        <div class="expBar__left">
+          <div class="expBar__label">Expediente</div>
+          <div class="expBar__id">${esc(id)}</div>
+        </div>
+        <div class="expBar__right">
+          <div class="expBar__greeting">${esc(saludo())}</div>
+          <div class="expBar__name">${esc(nombre)}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ============ RENDER: STATUS BAR ============
+  function renderStatusBar(p){
+    const info = getEstadoInfo(p.estado);
+    return `
+      <div class="statusBar" style="--state-color:${info.color}">
+        <div class="statusDot"></div>
+        <div>
+          <div class="statusBar__label">Estado actual</div>
+          <div class="statusBar__value">${esc(info.label)}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ============ RENDER: ACCIÓN DOCS ============
+  function renderDocs(p){
+    const docs = parseDocs(p.docs);
+    const driveUrl = buildDriveUrl(p.drive);
+
+    let docsHtml = '';
+    if(docs.length === 0){
+      docsHtml = `
+        <div class="docEmpty">
+          <div class="docEmpty__icon">✓</div>
+          <div class="docEmpty__title">No hay documentos pendientes</div>
+          <p class="docEmpty__sub">Tu carpeta está al día. Si quisieras revisar lo que ya nos enviaste, podés ingresar igualmente.</p>
+        </div>
+      `;
+    }else{
+      const items = docs.map((d, i) => `
+        <li class="docItem" style="animation-delay:${0.25 + i*0.06}s">
+          <span class="docItem__num">${String(i+1).padStart(2,'0')}</span>
+          <span class="docItem__text">${esc(d)}</span>
+        </li>
+      `).join('');
+      docsHtml = `<ul class="docList">${items}</ul>`;
+    }
+
+    const cta = driveUrl
+      ? `<a class="btn btn--primary" id="btnDrive" href="${esc(driveUrl)}" target="_blank" rel="noopener noreferrer">${ICON_DRIVE}<span>Subir a la carpeta del expediente</span></a>`
+      : `<button class="btn btn--primary" disabled style="opacity:.5;cursor:not-allowed">${ICON_DRIVE}<span>Carpeta no disponible</span></button>`;
+
+    const eyebrow = docs.length === 0 ? 'Documentación' : `Documentación pendiente · ${docs.length}`;
+    const title = docs.length === 0 ? 'Tu carpeta está al día' : 'Necesitamos estos documentos';
+    const lead = docs.length === 0
+      ? 'No tenemos pedidos abiertos en este momento. Cuando tu abogado solicite documentación nueva, te llegará un nuevo enlace.'
+      : 'Subí los siguientes documentos a la carpeta de tu expediente. Aceptamos foto del original (legible, sin reflejos) o PDF.';
+
+    return `
+      <main class="main">
+        <section class="card">
+          <p class="card__eyebrow">${esc(eyebrow)}</p>
+          <h1 class="card__title">${esc(title)}</h1>
+          <p class="card__lead">${esc(lead)}</p>
+          ${docsHtml}
+          ${cta}
+          <div class="help">
+            <strong>¿Cómo funciona?</strong> Al tocar el botón se abre la carpeta de tu expediente en Google Drive. Subí cada archivo con un nombre claro (por ej. <em>DNI-frente.jpg</em>). Tu abogado será notificado cuando los documentos estén disponibles.
+          </div>
+        </section>
+      </main>
+    `;
+  }
+
+  // ============ RENDER: ERROR (id faltante) ============
+  function renderError(){
+    return `
+      <main class="errorPage">
+        <div class="errorPage__inner">
+          <div class="errorPage__icon">!</div>
+          <h1 class="errorPage__title">Enlace incompleto</h1>
+          <p class="errorPage__msg">El enlace que recibiste no contiene la información necesaria para mostrar tu expediente. Por favor, escribinos por WhatsApp para que te enviemos un enlace nuevo.</p>
+          <a class="btn btn--secondary" href="https://wa.me/5492614300063?text=${encodeURIComponent('Hola, recibí un enlace al portal pero parece estar incompleto. ¿Pueden enviarme uno nuevo?')}" target="_blank" rel="noopener noreferrer">${ICON_HELP}<span>Escribir por WhatsApp</span></a>
+          <div class="errorPage__code">ERR_LINK_PARAMS_MISSING</div>
+        </div>
+      </main>
+    `;
+  }
+
+  // ============ RENDER: ACCIÓN DESCONOCIDA ============
+  function renderUnknown(p){
+    return `
+      <main class="errorPage">
+        <div class="errorPage__inner">
+          <div class="errorPage__icon">?</div>
+          <h1 class="errorPage__title">Próximamente</h1>
+          <p class="errorPage__msg">Esta sección de tu expediente todavía no está disponible. Pronto vas a poder usarla desde acá.</p>
+          <div class="errorPage__code">ACTION: ${esc(p.action || '—').toUpperCase()}</div>
+        </div>
+      </main>
+    `;
+  }
+
+  // ============ RENDER: FOOTER ============
+  function renderFooter(){
+    return `
+      <footer class="footer">
+        <p class="footer__line">AAM Abogados Asociados · Mendoza</p>
+        <div class="footer__contact">
+          <a class="footer__link" href="https://wa.me/5492614300063" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <span style="color:var(--text-dim);font-size:10px">·</span>
+          <a class="footer__link" href="mailto:abogadosasociadosmaster@gmail.com">Correo</a>
+        </div>
+      </footer>
+    `;
+  }
+
+  // ============ MAIN RENDER ============
+  function render(){
+    const p = getParams();
+    const app = $('#app');
+
+    // Validación: ID es obligatorio
+    if(!p.id){
+      app.innerHTML = renderHeader() + renderError() + renderFooter();
+      return;
+    }
+
+    let body = '';
+    if(p.action === 'docs' || p.action === ''){
+      body = renderDocs(p);
+    }else{
+      body = renderUnknown(p);
+    }
+
+    app.innerHTML = `
+      ${renderHeader()}
+      ${renderExpBar(p)}
+      ${renderStatusBar(p)}
+      ${body}
+      ${renderFooter()}
+    `;
+
+    // Wire up botón Drive
+    const btnDrive = $('#btnDrive');
+    if(btnDrive){
+      attachRipple(btnDrive);
+      btnDrive.addEventListener('click', function(){
+        toast('Abriendo carpeta de tu expediente…');
+      });
+    }
+
+    // Persistencia simple: registrar la última visita en localStorage
+    try{
+      const key = 'aam_visit_' + p.id;
+      const visits = JSON.parse(localStorage.getItem(key) || '[]');
+      visits.push({ t: new Date().toISOString(), action: p.action });
+      localStorage.setItem(key, JSON.stringify(visits.slice(-20)));
+    }catch(e){ /* ignore */ }
+  }
+
+  // ============ BOOT ============
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', render);
+  }else{
+    render();
+  }
+})();
+</script>
+</body>
+</html>
