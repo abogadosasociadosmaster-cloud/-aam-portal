@@ -645,7 +645,7 @@
   'use strict';
 
   // ============ ENDPOINT GAS (mismo que el War Room) ============
-  const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxhIOYnY-Fs-RUwpe3VTyV3LSXdM8Eqc3vE5hGqW1w4UgUHGbfsJLT7oVEGDuspChXy/exec';
+  const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxNthU585zRC4iWhcpwRqoMecLWqzybCvWhjD7pSYx0ro5Xu6EkTnv38blpVbsn8clo/exec';
 
   // ============ CONTACTO DEL ESTUDIO ============
   // Actualizar aquí si cambia el número. Formato: 54 9 [área][número]
@@ -705,6 +705,36 @@
     SUSPENDIDO:             { label:'Suspendido',                    color:'#475569' },
     ARCHIVADO:              { label:'Archivado',                     color:'#475569' },
   };
+
+  // Nombres legibles de documentos
+  const DOCS_LEGIBLES = {
+    'RAT_POD':                   'Ratificación de poder notarial',
+    'PACTO_CL':                  'Pacto de cuota litis firmado',
+    'DNI_DOC':                   'Fotocopia DNI del cliente',
+    'ACTA_FISC':                 'Acta fiscal / constatación policial',
+    'LIC':                       'Licencia de conducir',
+    'TV':                        'Título/cédula del vehículo',
+    'DCIA_SEG':                  'Denuncia a la aseguradora',
+    'CERT_COB':                  'Certificado de cobertura',
+    'SANID':                     'Certificado médico / sanidad',
+    'LESION':                    'Certificado de lesiones',
+    'PRESUPUESTO':               'Presupuesto de reparación',
+    'FOTOS':                     'Fotos del siniestro / daños',
+    'OTROS':                     'Otros documentos administrativos',
+    'ESCRITO_DEMANDA':           'Escrito de demanda',
+    'BONO_DF':                   'Bono de derecho fijo (Bono DF)',
+    'TASA_JUSTICIA':             'Comprobante tasa de justicia',
+    'PODER_JUDICIAL':            'Poder para actuaciones judiciales',
+    'PRUEBA_DOCUMENTAL':         'Prueba documental ofrecida',
+    'PUNTOS_PERICIA':            'Puntos de pericia propuestos',
+    'ALEGATO':                   'Alegato presentado',
+    'CARGO_DIGITAL':             'Cargo digital de presentación'
+  };
+
+  function obtenerEtiquetaDoc(clave) {
+    const k = String(clave).trim().toUpperCase();
+    return DOCS_LEGIBLES[k] || k.replace(/_/g, ' ').toLowerCase().replace(/^\w/, function(c){ return c.toUpperCase(); });
+  }
 
   // ============ HELPERS ============
   const $ = sel => document.querySelector(sel);
@@ -843,7 +873,6 @@
   // ============ RENDER: ACCIÓN DOCS ============
   function renderDocs(p){
     const docs = parseDocs(p.docs);
-    const driveUrl = buildDriveUrl(p.drive);
 
     let docsHtml = '';
     if(docs.length === 0){
@@ -855,27 +884,51 @@
         </div>
       `;
     } else {
-      const items = docs.map((d, i) => `
-        <li class="docItem" style="animation-delay:${0.25 + i*0.06}s">
-          <span class="docItem__num">${String(i+1).padStart(2,'0')}</span>
-          <span class="docItem__text">${esc(d)}</span>
-        </li>
-      `).join('');
+      const items = docs.map((d, i) => {
+        let isRevision = false;
+        try {
+          isRevision = localStorage.getItem('aam_uploaded_' + p.id + '_' + d) === 'EN_REVISION';
+        } catch(e) {}
+        
+        return `
+          <li class="docItem" style="animation-delay:${0.25 + i*0.06}s; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--divider);">
+            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
+              <span class="docItem__num">${String(i+1).padStart(2,'0')}</span>
+              <div class="docItem__text" style="display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-weight: 600; font-size: 14.5px; color: var(--primary);">${esc(obtenerEtiquetaDoc(d))}</span>
+                <span id="status_${d}" style="font-size: 11px; font-family: var(--mono); color: ${isRevision ? '#d97706' : 'var(--text-muted)'}; font-weight: ${isRevision ? '600' : '400'};">
+                  ${isRevision ? '🔍 En revisión (Recibido)' : 'Pendiente de entrega'}
+                </span>
+              </div>
+            </div>
+            <button class="btn btn--secondary btn-upload" id="btn_upload_${d}" onclick="document.getElementById('file_${d}').click()" style="width: auto; padding: 6px 12px; font-size: 13px; margin: 0; display: ${isRevision ? 'none' : 'inline-flex'}; align-items: center; gap: 6px; flex-shrink: 0; background: var(--bg-page); border-color: var(--border-strong);">
+              📤 <span>Subir</span>
+            </button>
+            <input type="file" id="file_${d}" accept="image/*,application/pdf" style="display: none;" onchange="window.subirArchivoDirecto('${esc(p.id)}', '${esc(d)}', this)">
+          </li>
+        `;
+      }).join('');
       docsHtml = `<ul class="docList">${items}</ul>`;
     }
 
-    const cta = driveUrl
-      ? `<a class="btn btn--primary" id="btnDrive" href="${esc(driveUrl)}" target="_blank" rel="noopener noreferrer">${ICON_DRIVE}<span>Subir a la carpeta del expediente</span></a>`
-      : `<button class="btn btn--primary" disabled style="opacity:.5;cursor:not-allowed">${ICON_DRIVE}<span>Carpeta no disponible aún</span></button>`;
+    const cta = `
+      <div style="background: var(--gold-bg); border: 1px solid var(--border-strong); border-radius: var(--r-md); padding: 16px; margin-bottom: 22px; text-align: center;">
+        <span style="font-size: 20px; display: block; margin-bottom: 4px;">📱</span>
+        <strong style="font-size: 14px; color: var(--primary); display: block; margin-bottom: 4px;">Subida directa desde tu celular</strong>
+        <p style="font-size: 12.5px; color: var(--text-muted); margin: 0; line-height: 1.5;">
+          Tocá el botón <strong>Subir</strong> al lado de cada documento pendiente. Podés sacarle una foto al original en el momento o seleccionar un PDF/imagen de tu galería.
+        </p>
+      </div>
+    `;
 
     const eyebrow = docs.length === 0 ? 'Documentación' : `Documentación pendiente · ${docs.length}`;
     const title   = docs.length === 0 ? 'Tu carpeta está al día' : 'Necesitamos estos documentos';
     const lead    = docs.length === 0
       ? 'No tenemos pedidos abiertos. Cuando tu abogado solicite algo nuevo, te llegará un enlace.'
-      : 'Subí los siguientes documentos a tu carpeta. Aceptamos foto del original (legible, sin reflejos) o PDF.';
+      : 'Subí los siguientes documentos a tu causa directamente. Aceptamos foto del original (legible, sin reflejos) o PDF.';
 
-    // Bloque de confirmación: solo aparece si hay docs pendientes y hay carpeta Drive
-    const confirmHtml = (docs.length > 0 && driveUrl) ? `
+    // Bloque de confirmación: solo aparece si hay docs pendientes
+    const confirmHtml = (docs.length > 0) ? `
       <div class="confirm-section" id="confirmSection">
         <p class="confirm-label">¿Ya subiste todos los documentos?</p>
         <p class="confirm-sub">Tocá el botón para avisarle a tu abogado/a.</p>
@@ -892,7 +945,7 @@
           ${docsHtml}
           ${cta}
           <div class="help">
-            <strong>¿Cómo funciona?</strong> Tocá el botón, se abre tu carpeta en Google Drive. Subí cada archivo con nombre claro (ej. <em>DNI-frente.jpg</em>). Cuando termines, volvé a esta página y avisanos.
+            <strong>✓ Subida instantánea:</strong> Los documentos se envían directamente a tu expediente de forma segura. No necesitás cuentas de Google ni iniciar sesión.
           </div>
           ${confirmHtml}
         </section>
@@ -917,6 +970,46 @@
   }
 
   // ============ RENDER: ACCIÓN NO DISPONIBLE AÚN ============
+  function renderCarpeta(p){
+    const driveUrl = buildDriveUrl(p.drive);
+    const nombre   = p.nombre ? decodeURIComponent(p.nombre) : 'cliente';
+    if(!driveUrl){
+      return renderProximamente(p);
+    }
+    // Auto-redirigir luego de 4 segundos si el usuario no toca nada
+    setTimeout(() => { window.location.href = driveUrl; }, 4000);
+    return `
+      <main style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;padding:32px 20px;text-align:center;gap:24px;">
+        <div style="font-size:52px;line-height:1;">📂</div>
+        <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">Tu carpeta de documentación</h1>
+        <p style="font-size:15px;color:#475569;max-width:380px;margin:0;line-height:1.6;">
+          Expediente <strong style="color:#1d4ed8;">N° ${esc(p.id)}</strong><br>
+          Aquí podés ver y entregar todos los archivos vinculados a tu causa.<br>
+          <span style="font-size:13px;color:#94a3b8;">Aceptamos foto del original (legible, sin reflejos) o PDF.</span>
+        </p>
+        <div style="background:#f0f9ff;border:2px solid #bae6fd;border-radius:16px;padding:20px 28px;max-width:380px;width:100%;">
+          <p style="font-size:13px;color:#0369a1;font-weight:600;margin:0 0 6px 0;text-transform:uppercase;letter-spacing:.5px;">¿Cómo funciona?</p>
+          <ol style="font-size:13px;color:#334155;text-align:left;margin:0;padding-left:18px;line-height:1.8;">
+            <li>Tocá el botón azul de abajo</li>
+            <li>Se abre tu carpeta en Google Drive</li>
+            <li>Subí cada archivo con nombre claro<br><em style="color:#64748b;">(ej: DNI-frente.jpg, Informe-medico.pdf)</em></li>
+            <li>Cuando termines, avisanos por WhatsApp</li>
+          </ol>
+        </div>
+        <a href="${driveUrl}" target="_blank" rel="noopener noreferrer"
+           id="btnCarpeta"
+           style="display:inline-flex;align-items:center;gap:12px;background:#1d4ed8;color:#fff;font-size:17px;font-weight:800;text-decoration:none;padding:18px 36px;border-radius:14px;box-shadow:0 4px 20px rgba(29,78,216,.35);letter-spacing:.3px;transition:transform .15s;">
+          📂 &nbsp;ACCEDER A MI CARPETA
+        </a>
+        <p style="font-size:11px;color:#94a3b8;margin:0;">Redirigiendo automáticamente en unos segundos…</p>
+        <a href="https://wa.me/${TEL_ESTUDIO}" target="_blank" rel="noopener noreferrer"
+           style="font-size:13px;color:#25d366;text-decoration:none;font-weight:600;">
+          ${ICON_WA} ¿Necesitás ayuda? Escribinos
+        </a>
+      </main>
+    `;
+  }
+
   function renderProximamente(p){
     return `
       <main class="errorPage">
@@ -986,6 +1079,8 @@
     let body = '';
     if(p.action === 'docs' || p.action === ''){
       body = renderDocs(p);
+    } else if(p.action === 'carpeta') {
+      body = renderCarpeta(p);
     } else {
       body = renderProximamente(p);
     }
@@ -1034,6 +1129,95 @@
       localStorage.setItem(key, JSON.stringify(visits.slice(-20)));
     } catch(e){}
   }
+
+  // ============ SUBIDA DIRECTA DE ARCHIVOS (BASE64) ============
+  function subirArchivoDirecto(idCausa, docClave, input) {
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    
+    // Límite de 12MB para Base64 y Apps Script
+    if (file.size > 12 * 1024 * 1024) {
+      alert("El archivo es demasiado grande (máximo 12MB).");
+      input.value = "";
+      return;
+    }
+
+    const btn = document.getElementById('btn_upload_' + docClave);
+    const statusText = document.getElementById('status_' + docClave);
+    
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '⏳...';
+    }
+    if (statusText) {
+      statusText.innerHTML = '<span style="color:#d97706; font-size:11px; font-weight:500;">⏳ Subiendo archivo...</span>';
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const base64Data = e.target.result;
+
+      fetch(GAS_ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: 'subirArchivoPortal',
+          idCausa: idCausa,
+          docClave: docClave,
+          fileName: file.name,
+          mimeType: file.type,
+          fileData: base64Data
+        })
+      })
+      .then(() => {
+        try {
+          localStorage.setItem('aam_uploaded_' + idCausa + '_' + docClave, 'EN_REVISION');
+        } catch(err) {}
+
+        if (statusText) {
+          statusText.innerHTML = '<span style="color:#d97706; font-size:11px; font-weight:600;">🔍 En revisión (Recibido)</span>';
+        }
+        if (btn) {
+          btn.style.display = 'none';
+        }
+        toast("✓ Archivo subido con éxito para revisión.");
+        checkAllUploaded(idCausa);
+      })
+      .catch(err => {
+        console.error(err);
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '📤 Subir';
+        }
+        if (statusText) {
+          statusText.innerHTML = '<span style="color:#dc2626; font-size:11px; font-weight:500;">❌ Error al subir</span>';
+        }
+        toast("❌ Error de red al subir. Intente de nuevo.");
+      });
+    };
+    reader.onerror = function() {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '📤 Subir';
+      }
+      toast("❌ Error al leer el archivo.");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function checkAllUploaded(idCausa) {
+    const buttons = document.querySelectorAll('.btn-upload');
+    let allHidden = true;
+    buttons.forEach(btn => {
+      if (btn.style.display !== 'none') allHidden = false;
+    });
+    if (allHidden) {
+      toast("✓ ¡Todos los documentos pendientes fueron cargados!");
+    }
+  }
+
+  window.subirArchivoDirecto = subirArchivoDirecto;
 
   // ============ CONFIRMAR ENVÍO DE DOCS AL ABOGADO ============
   // Llama al GAS con action confirmarDocs (mode no-cors, igual que el War Room).
