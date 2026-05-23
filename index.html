@@ -880,7 +880,7 @@
         <div class="docEmpty">
           <div class="docEmpty__icon">✓</div>
           <div class="docEmpty__title">No hay documentos pendientes</div>
-          <p class="docEmpty__sub">Tu carpeta está al día. Si querés revisar lo que ya enviaste, podés ingresar igualmente.</p>
+          <p class="docEmpty__sub">Tu expediente está al día. Si tu gestor solicita algo nuevo, te avisaremos.</p>
         </div>
       `;
     } else {
@@ -891,7 +891,7 @@
         } catch(e) {}
         
         return `
-          <li class="docItem" style="animation-delay:${0.25 + i*0.06}s; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--divider);">
+          <li class="docItem" style="animation-delay:${0.1 + i*0.05}s; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--divider);">
             <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
               <span class="docItem__num">${String(i+1).padStart(2,'0')}</span>
               <div class="docItem__text" style="display: flex; flex-direction: column; gap: 2px;">
@@ -911,42 +911,27 @@
       docsHtml = `<ul class="docList">${items}</ul>`;
     }
 
-    const cta = `
-      <div style="background: var(--gold-bg); border: 1px solid var(--border-strong); border-radius: var(--r-md); padding: 16px; margin-bottom: 22px; text-align: center;">
-        <span style="font-size: 20px; display: block; margin-bottom: 4px;">📱</span>
-        <strong style="font-size: 14px; color: var(--primary); display: block; margin-bottom: 4px;">Subida directa desde tu celular</strong>
-        <p style="font-size: 12.5px; color: var(--text-muted); margin: 0; line-height: 1.5;">
-          Tocá el botón <strong>Subir</strong> al lado de cada documento pendiente. Podés sacarle una foto al original en el momento o seleccionar un PDF/imagen de tu galería.
-        </p>
-      </div>
-    `;
-
-    const eyebrow = docs.length === 0 ? 'Documentación' : `Documentación pendiente · ${docs.length}`;
-    const title   = docs.length === 0 ? 'Tu carpeta está al día' : 'Necesitamos estos documentos';
+    const eyebrow = docs.length === 0 ? 'Expediente' : `Pendientes · ${docs.length}`;
+    const title   = docs.length === 0 ? 'Al día' : 'Subir Documentación';
     const lead    = docs.length === 0
-      ? 'No tenemos pedidos abiertos. Cuando tu abogado solicite algo nuevo, te llegará un enlace.'
-      : 'Subí los siguientes documentos a tu causa directamente. Aceptamos foto del original (legible, sin reflejos) o PDF.';
+      ? 'No tienes documentos solicitados pendientes en este momento.'
+      : 'Saca una foto legible al documento o selecciona un archivo para enviarlo directamente a tu abogado.';
 
     // Bloque de confirmación: solo aparece si hay docs pendientes
     const confirmHtml = (docs.length > 0) ? `
-      <div class="confirm-section" id="confirmSection">
-        <p class="confirm-label">¿Ya subiste todos los documentos?</p>
-        <p class="confirm-sub">Tocá el botón para avisarle a tu abogado/a.</p>
-        <button class="btn--confirm" id="btnConfirmar">✓ &nbsp;Ya subí los documentos</button>
+      <div class="confirm-section" id="confirmSection" style="margin-top: 15px; padding-top: 15px;">
+        <p class="confirm-label" style="font-size: 13px;">¿Terminaste de cargar todo?</p>
+        <button class="btn--confirm" id="btnConfirmar" style="padding: 10px 14px; font-size: 13px;">✓ &nbsp;Avisar a mi abogado/a</button>
       </div>
     ` : '';
 
     return `
       <main class="main">
-        <section class="card">
+        <section class="card" style="padding: 18px 16px 20px;">
           <p class="card__eyebrow">${esc(eyebrow)}</p>
-          <h1 class="card__title">${esc(title)}</h1>
-          <p class="card__lead">${esc(lead)}</p>
+          <h1 class="card__title" style="font-size: 22px; margin-bottom: 6px;">${esc(title)}</h1>
+          <p class="card__lead" style="font-size: 13.5px; margin-bottom: 15px; line-height: 1.45;">${lead}</p>
           ${docsHtml}
-          ${cta}
-          <div class="help">
-            <strong>✓ Subida instantánea:</strong> Los documentos se envían directamente a tu expediente de forma segura. No necesitás cuentas de Google ni iniciar sesión.
-          </div>
           ${confirmHtml}
         </section>
       </main>
