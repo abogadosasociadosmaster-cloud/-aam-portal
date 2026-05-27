@@ -1052,8 +1052,8 @@
   }
 
   // ============ MAIN RENDER ============
-  function render(){
-    const p   = getParams();
+  function render(customParams){
+    const p   = customParams || getParams();
     const app = $('#app');
 
     if(!p.id){
@@ -1255,10 +1255,38 @@
   }
 
   // ============ BOOT ============
+  function boot() {
+    const pInit = getParams();
+    if (pInit.id && !pInit.nombre) {
+      const app = $('#app');
+      app.innerHTML = renderHeader() + `<div style="text-align:center; padding: 60px; font-family:var(--sans); color:var(--primary); font-weight: 500;">⚙️ Cargando expediente...</div>`;
+      
+      const cb = 'cbPortalLoad_' + Date.now();
+      window[cb] = (response) => {
+        if (response && response.status === 'success' && response.data) {
+          const merged = Object.assign({}, pInit, response.data);
+          render(merged);
+        } else {
+          app.innerHTML = renderHeader() + renderError() + renderFooter(pInit);
+        }
+        const scriptEl = document.getElementById(cb);
+        if (scriptEl) scriptEl.remove();
+        delete window[cb];
+      };
+      
+      const script = document.createElement('script');
+      script.id = cb;
+      script.src = GAS_ENDPOINT + `?action=getCausaPortal&idCausa=${encodeURIComponent(pInit.id)}&callback=${cb}`;
+      document.head.appendChild(script);
+    } else {
+      render();
+    }
+  }
+
   if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', render);
+    document.addEventListener('DOMContentLoaded', boot);
   } else {
-    render();
+    boot();
   }
 
 })();
